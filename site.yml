@@ -1,0 +1,9 @@
+---
+- name: Déployer la stack avec des rôles
+  hosts: webserver
+  become: true
+
+  roles:
+    - docker_portainer_install
+    - jenkins_install
+    - container_deployment

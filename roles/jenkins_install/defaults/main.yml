@@ -1,0 +1,2 @@
+---
+jenkins_image: jenkins/jenkins:lts-alpine-jdk21

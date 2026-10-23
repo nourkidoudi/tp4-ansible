@@ -1,0 +1,63 @@
+---
+- name: Installer Docker, Portainer, Jenkins et déployer le conteneur web
+  hosts: webserver
+  become: true
+
+  vars:
+    app_dir: /opt/web-demo
+
+  tasks:
+    - name: Installer Docker, Compose et le SDK Python Docker
+      ansible.builtin.apt:
+        name:
+          - docker.io
+          - docker-compose-v2
+          - python3-docker
+        state: present
+        update_cache: true
+
+    - name: Docker démarré et activé au boot
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Lancer Portainer
+      community.docker.docker_container:
+        name: portainer
+        image: portainer/portainer-ce:latest
+        restart_policy: always
+        ports:
+          - "9000:9000"
+          - "9443:9443"
+        volumes:
+          - /var/run/docker.sock:/var/run/docker.sock
+          - portainer_data:/data
+
+    - name: Lancer Jenkins
+      community.docker.docker_container:
+        name: jenkins
+        image: jenkins/jenkins:lts-alpine-jdk21
+        restart_policy: always
+        ports:
+          - "8080:8080"
+          - "50000:50000"
+        volumes:
+          - jenkins_home:/var/jenkins_home
+
+    - name: Créer le dossier de l'application
+      ansible.builtin.file:
+        path: "{{ app_dir }}"
+        state: directory
+        mode: '0755'
+
+    - name: Copier docker-compose.yml
+      ansible.builtin.copy:
+        src: docker-compose.yml
+        dest: "{{ app_dir }}/docker-compose.yml"
+        mode: '0644'
+
+    - name: Démarrer le conteneur web avec docker compose
+      community.docker.docker_compose_v2:
+        project_src: "{{ app_dir }}"
+        state: present

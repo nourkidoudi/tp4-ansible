@@ -1,0 +1,15 @@
+---
+- name: Lancer Jenkins
+  community.docker.docker_container:
+    name: jenkins
+    image: "{{ jenkins_image }}"
+    restart_policy: always
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+  register: jenkins_result
+  retries: 3
+  delay: 10
+  until: jenkins_result is succeeded
