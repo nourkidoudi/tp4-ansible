@@ -52,17 +52,6 @@ ansible-playbook site.yml -K
 
 Image Docker Hub : `nourki2003/ansible-demo-web:1.0`
 
-## Captures
-
-| Fichier | Contenu |
-|---|---|
-| `captures/ping-pong.png` | `ansible all -m ping` : SUCCESS / pong |
-| `captures/playbook-run.png` | Premier passage de `webserver_install.yml` et `curl` |
-| `captures/idempotence.png` | Deuxième passage avec `changed=0` |
-| `captures/ssh-keys.png` | Exécution sans `-k` après `ssh-copy-id` |
-| `captures/containers.png` | Jenkins, Portainer et conteneur web dans le navigateur |
-| `captures/roles-run.png` | Exécution du playbook à base de rôles |
-
 ## Différences par rapport à l'énoncé
 
 - **2 VM au lieu de 3** (un nœud de contrôle et un nœud géré), à cause des limites matérielles du PC.
@@ -70,3 +59,23 @@ Image Docker Hub : `nourki2003/ansible-demo-web:1.0`
 - **Conteneur web sur le port 8081**, car Apache occupe déjà le port 80.
 - Nginx et k3s ont dû être arrêtés sur `vm-cible` : ils occupaient le port 80 (Traefik de k3s interceptait le trafic avant Apache).
 - **Image Alpine de Jenkins** choisie pour réduire le téléchargement sur une connexion lente.
+
+## Captures
+
+### 1. Test de connexion (`ansible all -m ping`)
+![ping-pong](captures/ping-pong.png)
+
+### 2. Premier passage de `webserver_install.yml` et `curl`
+![playbook-run](captures/playbook-run.png)
+
+### 3. Idempotence (deuxième passage, `changed=0`)
+![idempotence](captures/idempotence.png)
+
+### 4. Authentification SSH par clé (exécution sans `-k`)
+![ssh-keys](captures/ssh-keys.png)
+
+### 5. Jenkins, Portainer et conteneur web dans le navigateur
+![containers](captures/containers.png)
+
+### 6. Playbook à base de rôles
+![roles-run](captures/roles-run.png)
